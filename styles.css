@@ -2678,6 +2678,23 @@ html {
     }
 }
 
+/* FAYDA IA History Indicator */
+.fayda-history-indicator .fayda-message-bubble {
+    background: rgba(45, 90, 39, 0.1);
+    border: 1px solid rgba(45, 90, 39, 0.2);
+    font-style: italic;
+}
+
+.fayda-history-indicator .fayda-message-bubble p {
+    color: var(--gray);
+    font-size: 0.8rem;
+}
+
+.fayda-history-indicator .fayda-message-avatar {
+    background: rgba(45, 90, 39, 0.1);
+    color: var(--gray);
+}
+
 /* FAYDA IA Mobile Responsive */
 @media (max-width: 768px) {
     .fayda-chatbot {

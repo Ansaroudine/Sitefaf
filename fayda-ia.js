@@ -146,13 +146,7 @@ class FaydaIA {
         });
 
         // Quick action buttons
-        quickBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const question = btn.getAttribute('data-question');
-                input.value = question;
-                this.sendMessage();
-            });
-        });
+        this.bindQuickActions();
 
         // Close chat when clicking outside
         document.addEventListener('click', (e) => {
@@ -165,6 +159,16 @@ class FaydaIA {
         toggle.addEventListener('click', () => {
             this.hideNotification();
         });
+
+        // Save state before page unload
+        window.addEventListener('beforeunload', () => {
+            this.saveChatHistory();
+        });
+
+        // Save state periodically
+        setInterval(() => {
+            this.saveChatHistory();
+        }, 5000);
     }
 
     toggleChat() {
@@ -270,9 +274,19 @@ class FaydaIA {
         return data.response || data.message || 'Je n\'ai pas pu traiter votre demande.';
     }
 
-    addMessage(content, sender) {
+    addMessage(content, sender, fromHistory = false) {
         const messagesContainer = document.getElementById('fayda-messages');
-        const messageId = 'msg_' + Date.now();
+        const messageId = fromHistory ? `msg_${Date.now()}_${Math.random()}` : 'msg_' + Date.now();
+        
+        // Handle content format for history vs new messages
+        let messageContent, messageTime;
+        if (fromHistory && typeof content === 'object') {
+            messageContent = content.content;
+            messageTime = this.formatHistoryTime(content.timestamp);
+        } else {
+            messageContent = content;
+            messageTime = this.getCurrentTime();
+        }
         
         const messageHTML = `
             <div class="fayda-message fayda-message-${sender}" id="${messageId}">
@@ -281,10 +295,10 @@ class FaydaIA {
                 </div>
                 <div class="fayda-message-content">
                     <div class="fayda-message-bubble">
-                        <p>${this.formatMessage(content)}</p>
+                        <p>${this.formatMessage(messageContent)}</p>
                     </div>
                     <div class="fayda-message-time">
-                        <span>${this.getCurrentTime()}</span>
+                        <span>${messageTime}</span>
                     </div>
                 </div>
             </div>
@@ -292,25 +306,29 @@ class FaydaIA {
 
         messagesContainer.insertAdjacentHTML('beforeend', messageHTML);
         
-        // Remove quick actions after first user message
-        const quickActions = document.querySelector('.fayda-quick-actions');
-        if (quickActions && sender === 'user') {
-            quickActions.remove();
+        // Remove quick actions after first user message (only for new messages)
+        if (!fromHistory) {
+            const quickActions = document.querySelector('.fayda-quick-actions');
+            if (quickActions && sender === 'user') {
+                quickActions.remove();
+            }
         }
 
         // Scroll to bottom
         this.scrollToBottom();
 
-        // Save to history
-        this.messageHistory.push({
-            sender: sender,
-            content: content,
-            timestamp: new Date().toISOString(),
-            id: messageId
-        });
+        // Save to history (only for new messages)
+        if (!fromHistory) {
+            this.messageHistory.push({
+                sender: sender,
+                content: content,
+                timestamp: new Date().toISOString(),
+                id: messageId
+            });
 
-        // Save to localStorage
-        this.saveChatHistory();
+            // Save to localStorage
+            this.saveChatHistory();
+        }
     }
 
     formatMessage(content) {
@@ -354,9 +372,31 @@ class FaydaIA {
         });
     }
 
+    formatHistoryTime(timestamp) {
+        const date = new Date(timestamp);
+        const now = new Date();
+        const diffInHours = (now - date) / (1000 * 60 * 60);
+        
+        if (diffInHours < 1) {
+            return 'À l\'instant';
+        } else if (diffInHours < 24) {
+            return date.toLocaleTimeString('fr-FR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        } else {
+            return date.toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit'
+            });
+        }
+    }
+
     saveChatHistory() {
         try {
             localStorage.setItem('fayda-ia-history', JSON.stringify(this.messageHistory));
+            localStorage.setItem('fayda-ia-open', JSON.stringify(this.isOpen));
+            localStorage.setItem('fayda-ia-last-page', window.location.pathname);
         } catch (error) {
             console.warn('Could not save chat history:', error);
         }
@@ -372,9 +412,74 @@ class FaydaIA {
                     this.messageHistory = this.messageHistory.slice(-20);
                 }
             }
+            
+            // Restore chat state
+            const wasOpen = localStorage.getItem('fayda-ia-open') === 'true';
+            const lastPage = localStorage.getItem('fayda-ia-last-page');
+            
+            // If chat was open and we're on a different page, keep it open
+            if (wasOpen && lastPage && lastPage !== window.location.pathname) {
+                setTimeout(() => {
+                    this.openChat();
+                }, 1000);
+            }
+            
+            // Rebuild visual history if there are messages
+            if (this.messageHistory.length > 0) {
+                this.rebuildChatHistory();
+            }
         } catch (error) {
             console.warn('Could not load chat history:', error);
             this.messageHistory = [];
+        }
+    }
+
+    rebuildChatHistory() {
+        const messagesContainer = document.getElementById('fayda-messages');
+        if (!messagesContainer) return;
+        
+        // Clear existing messages except welcome message
+        const existingMessages = messagesContainer.querySelectorAll('.fayda-message');
+        existingMessages.forEach(msg => {
+            if (!msg.querySelector('.fayda-quick-actions')) {
+                msg.remove();
+            }
+        });
+        
+        // Add history messages
+        this.messageHistory.forEach(msg => {
+            this.addMessage(msg, msg.sender, true);
+        });
+        
+        // Remove quick actions if there are user messages
+        const hasUserMessages = this.messageHistory.some(msg => msg.sender === 'user');
+        if (hasUserMessages) {
+            const quickActions = document.querySelector('.fayda-quick-actions');
+            if (quickActions) {
+                quickActions.remove();
+            }
+        }
+        
+        // Add a subtle indicator that history was restored
+        if (this.messageHistory.length > 0) {
+            const historyIndicator = document.createElement('div');
+            historyIndicator.className = 'fayda-history-indicator';
+            historyIndicator.innerHTML = `
+                <div class="fayda-message fayda-message-bot">
+                    <div class="fayda-message-avatar">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="fayda-message-content">
+                        <div class="fayda-message-bubble">
+                            <p><em>Conversation précédente restaurée</em></p>
+                        </div>
+                        <div class="fayda-message-time">
+                            <span>Historique</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.insertBefore(historyIndicator.firstElementChild, messagesContainer.firstChild);
         }
     }
 
@@ -387,6 +492,8 @@ class FaydaIA {
     clearHistory() {
         this.messageHistory = [];
         localStorage.removeItem('fayda-ia-history');
+        localStorage.removeItem('fayda-ia-open');
+        localStorage.removeItem('fayda-ia-last-page');
         
         // Reload the chat interface
         const messagesContainer = document.getElementById('fayda-messages');
@@ -405,8 +512,43 @@ class FaydaIA {
                         </div>
                     </div>
                 </div>
+                <div class="fayda-quick-actions">
+                    <button class="fayda-quick-btn" data-question="Qu'est-ce que la Fayda Tijani ?">
+                        <i class="fas fa-question-circle"></i>
+                        Qu'est-ce que la Fayda Tijani ?
+                    </button>
+                    <button class="fayda-quick-btn" data-question="Comment rejoindre Ansaroudine France ?">
+                        <i class="fas fa-users"></i>
+                        Rejoindre Ansaroudine
+                    </button>
+                    <button class="fayda-quick-btn" data-question="Où sont les séances de Hadra ?">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Séances de Hadra
+                    </button>
+                    <button class="fayda-quick-btn" data-question="Comment contacter la fédération ?">
+                        <i class="fas fa-phone"></i>
+                        Contact
+                    </button>
+                </div>
             `;
+            
+            // Rebind quick action buttons
+            this.bindQuickActions();
         }
+    }
+
+    bindQuickActions() {
+        const quickBtns = document.querySelectorAll('.fayda-quick-btn');
+        quickBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const question = btn.getAttribute('data-question');
+                const input = document.getElementById('fayda-input');
+                if (input) {
+                    input.value = question;
+                    this.sendMessage();
+                }
+            });
+        });
     }
 }
 
