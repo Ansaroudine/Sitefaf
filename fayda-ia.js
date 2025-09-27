@@ -584,23 +584,20 @@ class FaydaIA {
 
 // Initialize IA FAYDA when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    window.faydaIA = new FaydaIA();
-    
-    // Attendre un peu pour que la configuration soit chargée
-    setTimeout(() => {
-        // Vérifier si la configuration est chargée
-        if (!window.FAYDA_CONFIG || !window.FAYDA_CONFIG.openai || !window.FAYDA_CONFIG.openai.apiKey) {
-            console.warn('⚠️ Configuration OpenAI non trouvée. Vérifiez les logs ci-dessus.');
-            console.log('💡 Solutions possibles :');
-            console.log('   1. Vérifiez que fayda-api-key.js est chargé');
-            console.log('   2. Vérifiez que votre clé API est correcte');
-            console.log('   3. Vérifiez l\'ordre de chargement des scripts');
-        } else {
+    // Attendre que la configuration soit chargée
+    function initializeFaydaIA() {
+        if (window.FAYDA_CONFIG && window.FAYDA_CONFIG.openai && window.FAYDA_CONFIG.openai.apiKey) {
+            window.faydaIA = new FaydaIA();
+            console.log('🤖 IA FAYDA initialized successfully!');
             console.log('✅ Configuration OpenAI chargée correctement');
+        } else {
+            console.warn('⚠️ Configuration OpenAI non trouvée, attente...');
+            setTimeout(initializeFaydaIA, 200);
         }
-    }, 100);
+    }
     
-    console.log('🤖 IA FAYDA initialized successfully!');
+    // Commencer l'initialisation
+    initializeFaydaIA();
 });
 
 // Export for module usage

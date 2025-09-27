@@ -213,6 +213,11 @@ function configureFaydaIA() {
 }
 
 // Exporter la configuration
+if (typeof window !== 'undefined') {
+    window.FAYDA_CONFIG = FAYDA_CONFIG;
+    console.log('📋 FAYDA_CONFIG chargé dans window');
+}
+
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = FAYDA_CONFIG;
 }

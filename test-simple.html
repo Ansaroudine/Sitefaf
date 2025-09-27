@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Simple IA FAYDA</title>
+</head>
+<body>
+    <h1>🧪 Test Simple IA FAYDA</h1>
+    <p>Ouvrez la console développeur (F12) pour voir les logs de configuration.</p>
+    
+    <script src="fayda-config.js"></script>
+    <script src="fayda-api-key.js"></script>
+    <script>
+        // Test simple après chargement
+        setTimeout(() => {
+            console.log('=== TEST DE CONFIGURATION ===');
+            console.log('FAYDA_CONFIG existe:', !!window.FAYDA_CONFIG);
+            console.log('OpenAI config existe:', !!window.FAYDA_CONFIG?.openai);
+            console.log('Clé API existe:', !!window.FAYDA_CONFIG?.openai?.apiKey);
+            
+            if (window.FAYDA_CONFIG && window.FAYDA_CONFIG.openai && window.FAYDA_CONFIG.openai.apiKey) {
+                console.log('✅ CONFIGURATION OK - IA FAYDA devrait fonctionner');
+            } else {
+                console.log('❌ CONFIGURATION MANQUANTE - Vérifiez les erreurs ci-dessus');
+            }
+        }, 500);
+    </script>
+</body>
+</html>
