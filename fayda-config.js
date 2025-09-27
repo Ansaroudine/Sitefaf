@@ -191,8 +191,11 @@ RESTE STRICTEMENT dans l'univers tijani et Ansaroudine France.`
     }
 };
 
-// Fonction pour configurer FAYDA IA après initialisation
+// Fonction pour configurer IA FAYDA après initialisation
 function configureFaydaIA() {
+    console.log('🔧 Configuration IA FAYDA...');
+    console.log('FAYDA_CONFIG:', window.FAYDA_CONFIG);
+    
     if (window.faydaIA) {
         // Vérifier la configuration OpenAI
         const isConfigured = window.faydaIA.checkConfiguration();
@@ -202,7 +205,10 @@ function configureFaydaIA() {
             console.log('🎯 Domaine spécialisé : Fayda Tijani, Cheikh Ibrahim NIASS, Ansaroudine France');
         } else {
             console.warn('⚠️ IA FAYDA: Configuration OpenAI manquante');
+            console.log('💡 Vérifiez que fayda-api-key.js est chargé et contient votre clé API');
         }
+    } else {
+        console.warn('⚠️ IA FAYDA instance non trouvée');
     }
 }
 

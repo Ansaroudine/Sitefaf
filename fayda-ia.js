@@ -246,8 +246,19 @@ class FaydaIA {
 
     async sendToOpenAI(message) {
         const config = window.FAYDA_CONFIG;
+        
+        // Debug: Vérifier la configuration
+        console.log('Debug - Config:', config);
+        console.log('Debug - OpenAI config:', config?.openai);
+        console.log('Debug - API Key:', config?.openai?.apiKey ? 'Présente' : 'Manquante');
+        
         if (!config || !config.openai || !config.openai.apiKey) {
-            throw new Error('Configuration OpenAI manquante');
+            console.error('Configuration OpenAI manquante:', {
+                configExists: !!config,
+                openaiExists: !!config?.openai,
+                apiKeyExists: !!config?.openai?.apiKey
+            });
+            throw new Error('Configuration OpenAI manquante. Vérifiez que fayda-api-key.js est chargé.');
         }
 
         // Préparer l'historique pour le contexte
@@ -571,12 +582,23 @@ class FaydaIA {
     }
 }
 
-// Initialize FAYDA IA when DOM is loaded
+// Initialize IA FAYDA when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     window.faydaIA = new FaydaIA();
     
-    // Configuration example (à remplacer par votre URL de webhook)
-    // window.faydaIA.setWebhookUrl('https://votre-webhook-url.com/api/fayda-ia');
+    // Attendre un peu pour que la configuration soit chargée
+    setTimeout(() => {
+        // Vérifier si la configuration est chargée
+        if (!window.FAYDA_CONFIG || !window.FAYDA_CONFIG.openai || !window.FAYDA_CONFIG.openai.apiKey) {
+            console.warn('⚠️ Configuration OpenAI non trouvée. Vérifiez les logs ci-dessus.');
+            console.log('💡 Solutions possibles :');
+            console.log('   1. Vérifiez que fayda-api-key.js est chargé');
+            console.log('   2. Vérifiez que votre clé API est correcte');
+            console.log('   3. Vérifiez l\'ordre de chargement des scripts');
+        } else {
+            console.log('✅ Configuration OpenAI chargée correctement');
+        }
+    }, 100);
     
     console.log('🤖 IA FAYDA initialized successfully!');
 });
