@@ -5,15 +5,15 @@ const FAYDA_CONFIG = {
     // Configuration OpenAI
     openai: {
         apiKey: '', // À configurer par l'utilisateur
-        model: 'gpt-3.5-turbo',
-        maxTokens: 500,
+        model: 'gpt-3.5-turbo-1106', // Modèle le plus économique
+        maxTokens: 300, // Réduit pour économiser les tokens
         temperature: 0.7
     },
     
     // Configuration de l'IA
     ai: {
         // Modèle d'IA à utiliser
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-3.5-turbo-1106',
         
         // Paramètres de température (0.0 = déterministe, 1.0 = créatif)
         temperature: 0.7,
@@ -22,7 +22,7 @@ const FAYDA_CONFIG = {
         maxTokens: 500,
         
         // Contexte spécifique à la Fayda Tijani
-        systemPrompt: `Tu es FAYDA IA, un assistant virtuel exclusivement dédié à la Fayda Tijani, Cheikh Ibrahim NIASS et Ansaroudine France.
+        systemPrompt: `Tu es IA FAYDA, un assistant virtuel exclusivement dédié à la Fayda Tijani, Cheikh Ibrahim NIASS et Ansaroudine France.
 
 BASE DE CONNAISSANCES :
 
@@ -113,11 +113,11 @@ RESTE STRICTEMENT dans l'univers tijani et Ansaroudine France.`
     
     // Messages par défaut
     messages: {
-        welcome: "As-salamu alaykum ! Je suis FAYDA IA, votre assistant virtuel pour la Fayda Tijani et Ansaroudine France. Comment puis-je vous aider aujourd'hui ?",
+        welcome: "As-salamu alaykum ! Je suis IA FAYDA, votre assistant virtuel pour la Fayda Tijani et Ansaroudine France. Comment puis-je vous aider aujourd'hui ?",
         
         error: "Désolé, je rencontre un problème technique. Veuillez réessayer plus tard ou contactez directement la fédération.",
         
-        typing: "FAYDA IA tape...",
+        typing: "IA FAYDA tape...",
         
         offline: "Je suis temporairement indisponible. Vous pouvez contacter directement la fédération pour vos questions."
     },
@@ -198,10 +198,10 @@ function configureFaydaIA() {
         const isConfigured = window.faydaIA.checkConfiguration();
         
         if (isConfigured) {
-            console.log('🤖 FAYDA IA configured with OpenAI API');
+            console.log('🤖 IA FAYDA configured with OpenAI API');
             console.log('🎯 Domaine spécialisé : Fayda Tijani, Cheikh Ibrahim NIASS, Ansaroudine France');
         } else {
-            console.warn('⚠️ FAYDA IA: Configuration OpenAI manquante');
+            console.warn('⚠️ IA FAYDA: Configuration OpenAI manquante');
         }
     }
 }

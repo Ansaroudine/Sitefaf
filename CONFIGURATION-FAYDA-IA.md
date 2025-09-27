@@ -1,8 +1,8 @@
-# 🤖 Configuration FAYDA IA - Assistant Virtuel Tijani
+# 🤖 Configuration IA FAYDA - Assistant Virtuel Tijani
 
 ## 📋 Prérequis
 
-Pour que FAYDA IA fonctionne, vous devez configurer votre clé API OpenAI.
+Pour que IA FAYDA fonctionne, vous devez configurer votre clé API OpenAI.
 
 ## 🔑 Configuration de la Clé API
 
@@ -29,9 +29,9 @@ const FAYDA_API_KEY = 'sk-votre-vraie-cle-api-ici';
 
 1. **Ouvrez** votre site dans un navigateur
 2. **Ouvrez** la console développeur (F12)
-3. **Cherchez** le message : `🔑 Clé API OpenAI configurée pour FAYDA IA`
+3. **Cherchez** le message : `🔑 Clé API OpenAI configurée pour IA FAYDA`
 
-## 🎯 Fonctionnalités de FAYDA IA
+## 🎯 Fonctionnalités de IA FAYDA
 
 ### Domaine de compétence strict :
 - ✅ **Fayda Tijani** : Histoire, principes, pratiques
@@ -65,7 +65,7 @@ const FAYDA_API_KEY = 'sk-votre-vraie-cle-api-ici';
 ### En local :
 1. Configurez `fayda-api-key.js`
 2. Ouvrez le site dans un navigateur
-3. Testez FAYDA IA
+3. Testez IA FAYDA
 
 ### Sur Netlify :
 1. **Important** : Le fichier `fayda-api-key.js` n'est PAS déployé
@@ -119,11 +119,11 @@ OPENAI_API_KEY=sk-votre-cle-api-ici
 
 ## 📞 Support
 
-Pour toute question sur la configuration de FAYDA IA :
+Pour toute question sur la configuration de IA FAYDA :
 1. Vérifiez ce guide
 2. Consultez les logs de la console
 3. Vérifiez votre configuration OpenAI
 
 ---
 
-**FAYDA IA** - Assistant virtuel spécialisé dans la Fayda Tijani 🤖✨
+**IA FAYDA** - Assistant virtuel spécialisé dans la Fayda Tijani 🤖✨

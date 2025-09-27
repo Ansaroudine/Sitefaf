@@ -1,4 +1,4 @@
-// FAYDA IA Chatbot Logic
+// IA FAYDA Chatbot Logic
 class FaydaIA {
     constructor() {
         this.isOpen = false;
@@ -22,12 +22,12 @@ class FaydaIA {
     createChatbot() {
         // Create chatbot container
         const chatbotHTML = `
-            <!-- FAYDA IA Chatbot Interface -->
+            <!-- IA FAYDA Chatbot Interface -->
             <div id="fayda-ia-chatbot" class="fayda-chatbot">
                 <!-- Chat Toggle Button -->
                 <button id="fayda-toggle" class="fayda-toggle">
                     <i class="fas fa-robot"></i>
-                    <span class="fayda-toggle-text">FAYDA IA</span>
+                    <span class="fayda-toggle-text">IA FAYDA</span>
                     <div class="fayda-notification-dot" id="fayda-notification"></div>
                 </button>
 
@@ -39,7 +39,7 @@ class FaydaIA {
                             <i class="fas fa-robot"></i>
                         </div>
                         <div class="fayda-header-info">
-                            <h3>FAYDA IA</h3>
+                            <h3>IA FAYDA</h3>
                             <p>Assistant virtuel pour la Fayda Tijani</p>
                             <div class="fayda-status">
                                 <span class="fayda-status-dot online"></span>
@@ -60,7 +60,7 @@ class FaydaIA {
                             </div>
                             <div class="fayda-message-content">
                                 <div class="fayda-message-bubble">
-                                    <p>As-salamu alaykum ! Je suis FAYDA IA, votre assistant virtuel pour la Fayda Tijani et Ansaroudine France. Comment puis-je vous aider aujourd'hui ?</p>
+                                    <p>As-salamu alaykum ! Je suis IA FAYDA, votre assistant virtuel pour la Fayda Tijani et Ansaroudine France. Comment puis-je vous aider aujourd'hui ?</p>
                                 </div>
                                 <div class="fayda-message-time">
                                     <span>Maintenant</span>
@@ -102,7 +102,7 @@ class FaydaIA {
                                 <i class="fas fa-circle"></i>
                                 <i class="fas fa-circle"></i>
                                 <i class="fas fa-circle"></i>
-                                FAYDA IA tape...
+                                IA FAYDA tape...
                             </span>
                         </div>
                     </div>
@@ -524,7 +524,7 @@ class FaydaIA {
                     </div>
                     <div class="fayda-message-content">
                         <div class="fayda-message-bubble">
-                            <p>As-salamu alaykum ! Je suis FAYDA IA, votre assistant virtuel pour la Fayda Tijani et Ansaroudine France. Comment puis-je vous aider aujourd'hui ?</p>
+                            <p>As-salamu alaykum ! Je suis IA FAYDA, votre assistant virtuel pour la Fayda Tijani et Ansaroudine France. Comment puis-je vous aider aujourd'hui ?</p>
                         </div>
                         <div class="fayda-message-time">
                             <span>Maintenant</span>
@@ -578,7 +578,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Configuration example (à remplacer par votre URL de webhook)
     // window.faydaIA.setWebhookUrl('https://votre-webhook-url.com/api/fayda-ia');
     
-    console.log('🤖 FAYDA IA initialized successfully!');
+    console.log('🤖 IA FAYDA initialized successfully!');
 });
 
 // Export for module usage
