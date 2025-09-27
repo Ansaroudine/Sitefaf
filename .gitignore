@@ -1,0 +1,23 @@
+# Fichiers de configuration sensibles
+fayda-api-key.js
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers de cache
+*.log
+*.tmp
+
+# Fichiers d'environnement
+.env
+.env.local
+.env.production
+
+# Dossiers de dépendances
+node_modules/
+npm-debug.log*
+
+# Fichiers de build
+dist/
+build/

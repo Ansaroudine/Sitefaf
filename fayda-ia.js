@@ -4,7 +4,6 @@ class FaydaIA {
         this.isOpen = false;
         this.isTyping = false;
         this.messageHistory = [];
-        this.webhookUrl = ''; // À configurer avec votre webhook
         
         this.init();
     }
@@ -229,8 +228,8 @@ class FaydaIA {
         this.showTyping();
 
         try {
-            // Send to webhook
-            const response = await this.sendToWebhook(message);
+            // Send to OpenAI
+            const response = await this.sendToOpenAI(message);
             
             // Hide typing indicator
             this.hideTyping();
@@ -241,37 +240,56 @@ class FaydaIA {
         } catch (error) {
             console.error('Error sending message:', error);
             this.hideTyping();
-            this.addMessage('Désolé, je rencontre un problème technique. Veuillez réessayer plus tard.', 'bot');
+            this.addMessage('Désolé, je rencontre un problème technique. Veuillez réessayer plus tard ou contactez directement la fédération.', 'bot');
         }
     }
 
-    async sendToWebhook(message) {
-        // Configuration du webhook
-        const webhookUrl = this.webhookUrl || 'https://votre-webhook-url.com/api/fayda-ia';
-        
-        const response = await fetch(webhookUrl, {
+    async sendToOpenAI(message) {
+        const config = window.FAYDA_CONFIG;
+        if (!config || !config.openai || !config.openai.apiKey) {
+            throw new Error('Configuration OpenAI manquante');
+        }
+
+        // Préparer l'historique pour le contexte
+        const conversationHistory = this.messageHistory.slice(-10).map(msg => ({
+            role: msg.sender === 'user' ? 'user' : 'assistant',
+            content: msg.content
+        }));
+
+        // Ajouter le message actuel
+        conversationHistory.push({
+            role: 'user',
+            content: message
+        });
+
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json'
+                'Authorization': `Bearer ${config.openai.apiKey}`
             },
             body: JSON.stringify({
-                message: message,
-                context: {
-                    page: window.location.pathname,
-                    timestamp: new Date().toISOString(),
-                    userAgent: navigator.userAgent
-                },
-                history: this.messageHistory.slice(-5) // Last 5 messages for context
+                model: config.openai.model,
+                messages: [
+                    {
+                        role: 'system',
+                        content: config.ai.systemPrompt
+                    },
+                    ...conversationHistory
+                ],
+                max_tokens: config.openai.maxTokens,
+                temperature: config.openai.temperature,
+                stop: null
             })
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json();
+            throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`);
         }
 
         const data = await response.json();
-        return data.response || data.message || 'Je n\'ai pas pu traiter votre demande.';
+        return data.choices[0].message.content.trim();
     }
 
     addMessage(content, sender, fromHistory = false) {
@@ -483,9 +501,10 @@ class FaydaIA {
         }
     }
 
-    // Method to configure webhook URL
-    setWebhookUrl(url) {
-        this.webhookUrl = url;
+    // Method to check OpenAI configuration
+    checkConfiguration() {
+        const config = window.FAYDA_CONFIG;
+        return config && config.openai && config.openai.apiKey;
     }
 
     // Method to clear chat history
